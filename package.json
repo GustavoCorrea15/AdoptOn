@@ -1,0 +1,38 @@
+{
+  "name": "sistema-adocao-responsavel",
+  "version": "1.0.0",
+  "description": "Sistema completo de adoção responsável de animais",
+  "scripts": {
+    "install-all": "npm run install-backend && npm run install-frontend && npm run install-mobile",
+    "install-backend": "cd backend && npm install",
+    "install-frontend": "cd frontend-web && npm install", 
+    "install-mobile": "cd mobile-app && npm install",
+    "dev": "docker-compose up --build",
+    "start": "docker-compose up -d",
+    "stop": "docker-compose down",
+    "reset": "docker-compose down -v && docker-compose up --build",
+    "init-db": "docker-compose exec backend npm run init-db",
+    "populate": "docker-compose exec backend node populate-db.js",
+    "populate-chat": "docker-compose exec backend npm run populate-chat",
+    "setup": "npm run dev && npm run init-db && npm run populate && npm run populate-chat",
+    "mobile": "cd mobile-app && npm start",
+    "logs": "docker-compose logs -f",
+    "clean": "docker system prune -a"
+  },
+  "keywords": [
+    "adoção",
+    "animais",
+    "ong",
+    "pets",
+    "react",
+    "nodejs",
+    "postgresql",
+    "docker",
+    "react-native"
+  ],
+  "author": "Sistema de Adoção",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
