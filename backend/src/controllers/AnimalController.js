@@ -3,22 +3,12 @@ const Animal = require('../models/Animal');
 class AnimalController {
   static async index(req, res) {
     try {
-      const filters = {
-        especie: req.query.especie,
-        porte: req.query.porte,
-        idade_min: req.query.idade_min,
-        idade_max: req.query.idade_max,
-        sexo: req.query.sexo,
-        cidade: req.query.cidade,
-        limit: req.query.limit || 20
-      };
-
+      const filters = req.query;
       const animals = await Animal.findAvailable(filters);
       
       res.json({
         success: true,
-        data: animals,
-        total: animals.length
+        data: animals
       });
     } catch (error) {
       console.error('Erro ao buscar animais:', error);
@@ -31,7 +21,8 @@ class AnimalController {
 
   static async show(req, res) {
     try {
-      const animal = await Animal.findById(req.params.id);
+      const { id } = req.params;
+      const animal = await Animal.findById(id);
       
       if (!animal) {
         return res.status(404).json({
@@ -55,18 +46,11 @@ class AnimalController {
 
   static async store(req, res) {
     try {
-      if (req.user.tipo_usuario !== 'ong') {
-        return res.status(403).json({
-          success: false,
-          error: 'Apenas ONGs podem cadastrar animais'
-        });
-      }
-
       const animalData = {
         ...req.body,
         ong_id: req.user.id
       };
-
+      
       const animal = await Animal.create(animalData);
       
       res.status(201).json({
@@ -74,7 +58,27 @@ class AnimalController {
         data: animal
       });
     } catch (error) {
-      console.error('Erro ao cadastrar animal:', error);
+      console.error('Erro ao criar animal:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Erro interno do servidor'
+      });
+    }
+  }
+
+  static async getMatching(req, res) {
+    try {
+      const userId = req.user.id;
+      const limit = parseInt(req.query.limit) || 10;
+      
+      const animals = await Animal.getMatchingAnimals(userId, limit);
+      
+      res.json({
+        success: true,
+        data: animals
+      });
+    } catch (error) {
+      console.error('Erro ao buscar animais compatíveis:', error);
       res.status(500).json({
         success: false,
         error: 'Erro interno do servidor'

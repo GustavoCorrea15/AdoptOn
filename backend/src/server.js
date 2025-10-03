@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const http = require('http');
 const socketIo = require('socket.io');
 const session = require('express-session');
+const crypto = require('crypto');
 require('dotenv').config();
 
 // Middlewares de segurança
@@ -43,10 +44,9 @@ app.use(helmet({
   },
 }));
 
-const crypto = require('crypto');
+// Configuração de sessão
 const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
-
-app.use(session({
+const sessionConfig = {
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false,
@@ -56,7 +56,9 @@ app.use(session({
     sameSite: 'strict',
     maxAge: 24 * 60 * 60 * 1000
   }
-}));
+};
+
+app.use(session(sessionConfig));
 
 app.use(cors({
   origin: [

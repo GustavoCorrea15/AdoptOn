@@ -97,7 +97,7 @@ class User {
     
     user.updated_at = new Date();
     const { senha, ...result } = user;
-    return result.rows[0];
+    return result;
   }
 
   static async validatePassword(plainPassword, hashedPassword) {
@@ -128,37 +128,37 @@ class User {
       return 0;
     }
 
-    const user = userResult.rows[0];
-    const animal = animalResult.rows[0];
+    const userData = userResult.rows[0];
+    const animalData = animalResult.rows[0];
     
     let score = 0;
     let maxScore = 0;
 
     // Compatibilidade de moradia
     maxScore += 25;
-    if (user.tipo_moradia === 'casa' && user.tem_quintal && animal.porte === 'grande') {
+    if (userData.tipo_moradia === 'casa' && userData.tem_quintal && animalData.porte === 'grande') {
       score += 25;
-    } else if (user.tipo_moradia === 'apartamento' && animal.porte === 'pequeno') {
+    } else if (userData.tipo_moradia === 'apartamento' && animalData.porte === 'pequeno') {
       score += 20;
-    } else if (user.tamanho_moradia === 'grande' && animal.porte === 'medio') {
+    } else if (userData.tamanho_moradia === 'grande' && animalData.porte === 'medio') {
       score += 15;
     }
 
     // Compatibilidade de energia
     maxScore += 20;
-    if (user.tempo_disponivel === 'muito' && animal.nivel_energia === 'alto') {
+    if (userData.tempo_disponivel === 'muito' && animalData.nivel_energia === 'alto') {
       score += 20;
-    } else if (user.tempo_disponivel === 'pouco' && animal.nivel_energia === 'baixo') {
+    } else if (userData.tempo_disponivel === 'pouco' && animalData.nivel_energia === 'baixo') {
       score += 20;
-    } else if (user.tempo_disponivel === 'medio' && animal.nivel_energia === 'medio') {
+    } else if (userData.tempo_disponivel === 'medio' && animalData.nivel_energia === 'medio') {
       score += 15;
     }
 
     // Experiência com pets
     maxScore += 15;
-    if (user.experiencia_pets === 'muita' || animal.cuidados_especiais === false) {
+    if (userData.experiencia_pets === 'muita' || animalData.cuidados_especiais === false) {
       score += 15;
-    } else if (user.experiencia_pets === 'pouca' && animal.cuidados_especiais === true) {
+    } else if (userData.experiencia_pets === 'pouca' && animalData.cuidados_especiais === true) {
       score += 5;
     }
 

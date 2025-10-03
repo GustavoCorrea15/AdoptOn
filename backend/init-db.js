@@ -13,6 +13,8 @@ const pool = new Pool({
 });
 
 async function initDatabase() {
+  let dbPool;
+  
   try {
     // Criar banco de dados se não existir
     const dbName = process.env.DB_NAME || 'sistema_adocao';
@@ -21,6 +23,9 @@ async function initDatabase() {
     if (sanitizedDbName !== dbName) {
       throw new Error('Nome do banco contém caracteres inválidos');
     }
+    if (!sanitizedDbName) {
+      throw new Error('Nome do banco não pode estar vazio');
+    }
     await pool.query(`CREATE DATABASE "${sanitizedDbName}"`);
     console.log('Banco de dados criado com sucesso!');
   } catch (error) {
@@ -28,18 +33,25 @@ async function initDatabase() {
       console.log('Banco de dados já existe.');
     } else {
       console.error('Erro ao criar banco:', error.message);
+      return;
     }
   }
 
   // Conectar ao banco específico
   const dbName = process.env.DB_NAME || 'sistema_adocao';
-  const dbPool = new Pool({
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    database: dbName,
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'password',
-  });
+  
+  try {
+    dbPool = new Pool({
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      database: dbName,
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'password',
+    });
+  } catch (error) {
+    console.error('Erro ao conectar ao banco específico:', error.message);
+    return;
+  }
 
   try {
     // Executar schema SQL
@@ -63,8 +75,12 @@ async function initDatabase() {
   } catch (error) {
     console.error('Erro ao executar schema:', error.message);
   } finally {
-    await dbPool.end();
-    await pool.end();
+    try {
+      if (dbPool) await dbPool.end();
+      await pool.end();
+    } catch (closeError) {
+      console.error('Erro ao fechar conexões:', closeError.message);
+    }
   }
 }
 
