@@ -149,13 +149,21 @@ const Animals = () => {
     if (!user) return;
     
     try {
-      // Obter token CSRF
-      const csrfResponse = await fetch('http://localhost:3002/api/csrf-token', {
+      // Configurar URL da API
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3002';
+      
+      // Passo 1: Obter token CSRF para segurança
+      const csrfResponse = await fetch(`${apiUrl}/api/csrf-token`, {
         credentials: 'include'
       });
+      
+      if (!csrfResponse.ok) {
+        throw new Error('Falha ao obter token CSRF');
+      }
+      
       const csrfData = await csrfResponse.json();
       
-      const response = await fetch('http://localhost:3002/api/chat/start', {
+      const response = await fetch(`${apiUrl}/api/chat/start`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -169,16 +177,21 @@ const Animals = () => {
         })
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       if (data.success) {
         playSound('click');
         navigate('/chat');
       } else {
-        console.error('Erro ao iniciar chat:', data.error);
+        throw new Error(data.error || 'Erro desconhecido ao iniciar chat');
       }
     } catch (error) {
-      console.error('Erro ao iniciar conversa:', error);
+      console.error('Erro ao iniciar conversa:', error.message);
+      // Opcional: mostrar notificação para o usuário
     }
   };
 

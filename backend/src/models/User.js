@@ -88,11 +88,12 @@ class User {
     const user = memoryDB.users[userIndex];
     
     // Atualizar apenas campos permitidos
-    for (const key of Object.keys(updateData)) {
-      if (updateData[key] !== undefined && allowedFields.includes(key)) {
-        user[key] = updateData[key];
-      }
-    }
+    const fieldsToUpdate = Object.keys(updateData)
+      .filter(key => updateData[key] !== undefined && allowedFields.includes(key));
+    
+    fieldsToUpdate.forEach(key => {
+      user[key] = updateData[key];
+    });
     
     user.updated_at = new Date();
     const { senha, ...result } = user;

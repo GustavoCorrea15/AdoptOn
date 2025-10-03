@@ -16,7 +16,12 @@ async function initDatabase() {
   try {
     // Criar banco de dados se não existir
     const dbName = process.env.DB_NAME || 'sistema_adocao';
-    await pool.query('CREATE DATABASE $1', [dbName]);
+    // Sanitizar nome do banco para evitar SQL injection
+    const sanitizedDbName = dbName.replace(/[^a-zA-Z0-9_]/g, '');
+    if (sanitizedDbName !== dbName) {
+      throw new Error('Nome do banco contém caracteres inválidos');
+    }
+    await pool.query(`CREATE DATABASE "${sanitizedDbName}"`);
     console.log('Banco de dados criado com sucesso!');
   } catch (error) {
     if (error.code === '42P04') {

@@ -43,29 +43,20 @@ app.use(helmet({
   },
 }));
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(session({
-    secret: process.env.SESSION_SECRET || 'adoption-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: true,
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  }));
-} else {
-  app.use(session({
-    secret: 'dev-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000
-    }
-  }));
-}
+const crypto = require('crypto');
+const sessionSecret = process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
+
+app.use(session({
+  secret: sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 24 * 60 * 60 * 1000
+  }
+}));
 
 app.use(cors({
   origin: [
@@ -96,6 +87,8 @@ io.on('connection', (socket) => {
   
   // Entrar em sala de chat
   socket.on('join_chat', (data) => {
+    if (!data || !data.userId || !data.participantId || !data.animalId) return;
+    
     const { userId, participantId, animalId } = data;
     const roomId = `chat_${Math.min(userId, participantId)}_${Math.max(userId, participantId)}_${animalId}`;
     socket.join(roomId);
@@ -106,32 +99,42 @@ io.on('connection', (socket) => {
   
   // Enviar mensagem
   socket.on('send_message', (data) => {
-    const { destinatarioId, animalId, conteudo, remetenteId, remetenteName } = data;
-    const roomId = `chat_${Math.min(remetenteId, destinatarioId)}_${Math.max(remetenteId, destinatarioId)}_${animalId}`;
-    
-    const messageData = {
-      id: Date.now(),
-      remetente_id: remetenteId,
-      destinatario_id: destinatarioId,
-      animal_id: animalId,
-      conteudo,
-      sender_name: remetenteName,
-      created_at: new Date().toISOString(),
-      tipo_mensagem: 'text',
-      lida: false
-    };
-    
-    // Enviar para todos na sala exceto o remetente
-    socket.to(roomId).emit('receive_message', messageData);
-    console.log(`Mensagem enviada na sala ${roomId}`);
+    try {
+      const { destinatarioId, animalId, conteudo, remetenteId, remetenteName } = data;
+      const roomId = `chat_${Math.min(remetenteId, destinatarioId)}_${Math.max(remetenteId, destinatarioId)}_${animalId}`;
+      
+      const messageData = {
+        id: Date.now(),
+        remetente_id: remetenteId,
+        destinatario_id: destinatarioId,
+        animal_id: animalId,
+        conteudo,
+        sender_name: remetenteName,
+        created_at: new Date().toISOString(),
+        tipo_mensagem: 'text',
+        lida: false
+      };
+      
+      // Enviar para todos na sala exceto o remetente
+      socket.to(roomId).emit('receive_message', messageData);
+      console.log(`Mensagem enviada na sala ${roomId}`);
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+    }
   });
   
   // Marcar como digitando
   socket.on('typing', (data) => {
-    socket.to(socket.roomId).emit('user_typing', {
-      userId: socket.userId,
-      isTyping: data.isTyping
-    });
+    try {
+      if (socket.roomId && socket.userId) {
+        socket.to(socket.roomId).emit('user_typing', {
+          userId: socket.userId,
+          isTyping: data.isTyping
+        });
+      }
+    } catch (error) {
+      console.error('Erro ao processar typing:', error);
+    }
   });
   
     socket.on('disconnect', () => {

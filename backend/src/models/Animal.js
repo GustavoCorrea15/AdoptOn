@@ -242,15 +242,9 @@ class Animal {
 
   static async findByOng(ongId, status = null) {
     const ongIdNum = parseInt(ongId);
-    const animals = [];
-    
-    for (const animal of memoryDB.animals) {
-      if (animal.ong_id === ongIdNum && (!status || animal.status === status)) {
-        animals.push(animal);
-      }
-    }
-    
-    return animals.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    return memoryDB.animals
+      .filter(animal => animal.ong_id === ongIdNum && (!status || animal.status === status))
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
   static async updateStatus(id, status, adotante_id = null) {
@@ -327,17 +321,18 @@ class Animal {
       FROM usuarios WHERE id = $1
     `;
     
-    const animals = [];
-    const maxLimit = Math.min(limit, memoryDB.animals.length);
+    if (limit <= 0) return [];
     
-    for (let i = 0; i < memoryDB.animals.length && animals.length < maxLimit; i++) {
-      const animal = memoryDB.animals[i];
-      if (animal.status === 'disponivel') {
-        animals.push(animal);
+    const result = [];
+    const animals = memoryDB.animals;
+    
+    for (let i = 0; i < animals.length && result.length < limit; i++) {
+      if (animals[i].status === 'disponivel') {
+        result.push(animals[i]);
       }
     }
     
-    return animals;
+    return result;
   }
 }
 
