@@ -149,12 +149,20 @@ const Animals = () => {
     if (!user) return;
     
     try {
+      // Obter token CSRF
+      const csrfResponse = await fetch('http://localhost:3002/api/csrf-token', {
+        credentials: 'include'
+      });
+      const csrfData = await csrfResponse.json();
+      
       const response = await fetch('http://localhost:3002/api/chat/start', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
+          'Authorization': `Bearer ${user.token}`,
+          'X-CSRF-Token': csrfData.csrfToken
         },
+        credentials: 'include',
         body: JSON.stringify({
           animal_id: animal.id,
           mensagem: `Olá! Tenho interesse em conhecer mais sobre ${animal.nome}. Podemos conversar?`

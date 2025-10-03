@@ -3,7 +3,13 @@ const cors = require('cors');
 const helmet = require('helmet');
 const http = require('http');
 const socketIo = require('socket.io');
+const session = require('express-session');
 require('dotenv').config();
+
+// Middlewares de segurança
+const { apiLimiter } = require('./middleware/rateLimiter');
+const { validateInput } = require('./middleware/inputValidation');
+const { generateCSRFToken, sanitizeInput } = require('./middleware/security');
 
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -14,6 +20,7 @@ const matchingRoutes = require('./routes/matching');
 const chatRoutes = require('./routes/chat');
 const favoriteRoutes = require('./routes/favorites');
 const adminRoutes = require('./routes/admin');
+const csrfRoutes = require('./routes/csrf');
 
 const app = express();
 const server = http.createServer(app);
@@ -24,8 +31,42 @@ const io = socketIo(server, {
   }
 });
 
-// Middlewares
-app.use(helmet());
+// Middlewares de segurança
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'adoption-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true,
+      httpOnly: true,
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
+    }
+  }));
+} else {
+  app.use(session({
+    secret: 'dev-secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000
+    }
+  }));
+}
+
 app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -36,12 +77,22 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-csrf-token']
 }));
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Aplicar rate limiting
+app.use('/api/', apiLimiter);
+
+// Aplicar validação de entrada
+app.use(validateInput);
+app.use(sanitizeInput);
+app.use(generateCSRFToken);
+
 // Socket.io para chat em tempo real
 io.on('connection', (socket) => {
-  console.log('Usuário conectado:', socket.id);
+  try {
+    console.log('Usuário conectado:', socket.id);
   
   // Entrar em sala de chat
   socket.on('join_chat', (data) => {
@@ -83,9 +134,12 @@ io.on('connection', (socket) => {
     });
   });
   
-  socket.on('disconnect', () => {
-    console.log('Usuário desconectado:', socket.id);
-  });
+    socket.on('disconnect', () => {
+      console.log('Usuário desconectado:', socket.id);
+    });
+  } catch (error) {
+    console.error('Erro na conexão Socket.IO:', error);
+  }
 });
 
 // Disponibilizar io para as rotas
@@ -95,6 +149,7 @@ app.use((req, res, next) => {
 });
 
 // Rotas
+app.use('/api', csrfRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/animals', animalRoutes);
@@ -111,13 +166,8 @@ app.get('/health', (req, res) => {
 });
 
 // Middleware de erro global
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: 'Algo deu errado!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Erro interno do servidor'
-  });
-});
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
 
 // 404 handler
 app.use('*', (req, res) => {

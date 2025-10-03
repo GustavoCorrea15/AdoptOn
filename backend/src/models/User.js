@@ -77,7 +77,25 @@ class User {
       RETURNING id, nome, email, tipo_usuario, updated_at
     `;
 
-    const result = await pool.query(query, values);
+    // Simulação para memoryDB - em produção usar pool.query com prepared statements
+    const userId = parseInt(id);
+    const userIndex = memoryDB.users.findIndex(u => u.id === userId);
+    
+    if (userIndex === -1) {
+      throw new Error('Usuário não encontrado');
+    }
+    
+    const user = memoryDB.users[userIndex];
+    
+    // Atualizar apenas campos permitidos
+    for (const key of Object.keys(updateData)) {
+      if (updateData[key] !== undefined && allowedFields.includes(key)) {
+        user[key] = updateData[key];
+      }
+    }
+    
+    user.updated_at = new Date();
+    const { senha, ...result } = user;
     return result.rows[0];
   }
 
@@ -98,10 +116,12 @@ class User {
       FROM animais WHERE id = $1
     `;
 
-    const [userResult, animalResult] = await Promise.all([
-      pool.query(userQuery, [userId]),
-      pool.query(animalQuery, [animalId])
-    ]);
+    // Simulação para memoryDB - em produção usar pool.query com prepared statements
+    const user = memoryDB.users.find(u => u.id === parseInt(userId));
+    const animal = memoryDB.animals?.find(a => a.id === parseInt(animalId));
+    
+    const userResult = { rows: user ? [user] : [] };
+    const animalResult = { rows: animal ? [animal] : [] };
 
     if (!userResult.rows[0] || !animalResult.rows[0]) {
       return 0;

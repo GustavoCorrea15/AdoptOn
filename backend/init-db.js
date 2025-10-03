@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
-require('dotenv').config();
 
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
@@ -14,7 +15,8 @@ const pool = new Pool({
 async function initDatabase() {
   try {
     // Criar banco de dados se não existir
-    await pool.query(`CREATE DATABASE ${process.env.DB_NAME || 'sistema_adocao'}`);
+    const dbName = process.env.DB_NAME || 'sistema_adocao';
+    await pool.query('CREATE DATABASE $1', [dbName]);
     console.log('Banco de dados criado com sucesso!');
   } catch (error) {
     if (error.code === '42P04') {
@@ -25,10 +27,11 @@ async function initDatabase() {
   }
 
   // Conectar ao banco específico
+  const dbName = process.env.DB_NAME || 'sistema_adocao';
   const dbPool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
-    database: process.env.DB_NAME || 'sistema_adocao',
+    database: dbName,
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'password',
   });
