@@ -1,7 +1,7 @@
 {
-  "name": "sistema-adocao-responsavel",
+  "name": "adoption",
   "version": "1.0.0",
-  "description": "Sistema completo de adoção responsável de animais",
+  "description": "AdoptiON - Sistema completo de adoção responsável de animais",
   "scripts": {
     "install-all": "npm run install-backend && npm run install-frontend && npm run install-mobile",
     "install-backend": "cd backend && npm install",
@@ -30,7 +30,7 @@
     "docker",
     "react-native"
   ],
-  "author": "Sistema de Adoção",
+  "author": "AdoptiON",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.0"

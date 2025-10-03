@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script de instalação automática - Sistema de Adoção Responsável
-echo "🐕❤️ Instalando Sistema de Adoção Responsável..."
+# Script de instalação automática - AdoptiON
+echo "🐕❤️ Instalando AdoptiON..."
 
 # Verificar se Docker está instalado
 if ! command -v docker &> /dev/null; then

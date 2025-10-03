@@ -1,7 +1,7 @@
 {
-  "name": "sistema-adocao-backend",
+  "name": "adoption-backend",
   "version": "1.0.0",
-  "description": "Backend do Sistema de Adoção Responsável de Animais",
+  "description": "Backend do AdoptiON - Sistema de Adoção Responsável de Animais",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -41,6 +41,6 @@
     "ong",
     "pets"
   ],
-  "author": "Sistema de Adoção",
+  "author": "AdoptiON",
   "license": "MIT"
 }

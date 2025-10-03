@@ -1,6 +1,6 @@
 @echo off
-REM Script de instalação automática - Sistema de Adoção Responsável (Windows)
-echo 🐕❤️ Instalando Sistema de Adoção Responsável...
+REM Script de instalação automática - AdoptiON (Windows)
+echo 🐕❤️ Instalando AdoptiON...
 
 REM Verificar se Docker está instalado
 docker --version >nul 2>&1

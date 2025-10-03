@@ -1,7 +1,7 @@
 {
-  "name": "sistema-adocao-frontend",
+  "name": "adoption-frontend",
   "version": "1.0.0",
-  "description": "Frontend Web do Sistema de Adoção Responsável",
+  "description": "Frontend Web do AdoptiON - Sistema de Adoção Responsável",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.1",

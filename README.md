@@ -1,4 +1,4 @@
-# 🐕❤️ Sistema de Adoção Responsável de Animais
+# 🐕❤️ AdoptiON - Sistema de Adoção Responsável de Animais
 
 > **Conectando animais abandonados com famílias amorosas através da tecnologia**
 
@@ -18,7 +18,7 @@ chmod +x install.sh
 ```bash
 # 1. Clonar repositório
 git clone <repo-url>
-cd Sistema-de-adocao-responsavel-de-animais
+cd AdoptiON
 
 # 2. Instalar todas as dependências
 npm run install-all
@@ -105,7 +105,7 @@ Adotante vê animal → Clica "💬 Chat" → Conversa iniciada → ONG responde
 ## 📁 Estrutura do Projeto
 
 ```
-Sistema-de-adocao-responsavel-de-animais/
+AdoptiON/
 ├── 🖥️ backend/                 # API Node.js + Socket.IO
 │   ├── src/routes/            # Rotas da API
 │   ├── src/models/            # Modelos de dados
@@ -179,4 +179,4 @@ npm run ios
 
 ---
 
-**Desenvolvido com ❤️ para conectar animais e famílias**
+**AdoptiON - Desenvolvido com ❤️ para conectar animais e famílias**

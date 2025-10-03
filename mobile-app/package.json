@@ -1,7 +1,7 @@
 {
-  "name": "sistema-adocao-mobile",
+  "name": "adoption-mobile",
   "version": "1.0.0",
-  "description": "App Mobile do Sistema de Adoção Responsável",
+  "description": "App Mobile do AdoptiON - Sistema de Adoção Responsável",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
