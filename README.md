@@ -113,10 +113,6 @@ AdoptiON/
 ├── 🎨 frontend-web/           # Interface React
 │   ├── src/pages/             # Páginas da aplicação
 │   └── src/components/        # Componentes reutilizáveis
-├── 📱 mobile-app/             # App React Native
-│   ├── src/screens/           # Telas do app
-│   ├── src/context/           # Contextos
-│   └── src/components/        # Componentes mobile
 ├── 🗄️ database/               # Scripts SQL
 ├── 📚 docs/                   # Documentação técnica
 └── 🐳 docker-compose.yml      # Orquestração
@@ -136,36 +132,6 @@ AdoptiON/
 2. **Gerenciar**: Dashboard completo de animais
 3. **Comunicar**: Responder interessados via chat
 4. **Acompanhar**: Métricas de adoções e engajamento
-
-## 📱 App Mobile
-
-**Versão mobile completa desenvolvida com React Native + Expo**
-
-### 🚀 **Executar App Mobile**
-```bash
-# Navegar para pasta mobile
-cd mobile-app
-
-# Instalar dependências
-npm install
-
-# Executar app
-npm start
-
-# Android
-npm run android
-
-# iOS
-npm run ios
-```
-
-### ✨ **Funcionalidades Mobile**
-- ✅ Autenticação completa
-- ✅ Lista e busca de animais
-- ✅ Chat em tempo real
-- ✅ Sistema de favoritos
-- ✅ Detalhes completos dos animais
-- ✅ Perfil do usuário
 
 ## 🚀 Roadmap
 

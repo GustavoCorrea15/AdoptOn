@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "AdoptiON - Sistema completo de adoção responsável de animais",
   "scripts": {
-    "install-all": "npm run install-backend && npm run install-frontend && npm run install-mobile",
+    "install-all": "npm run install-backend && npm run install-frontend",
     "install-backend": "cd backend && npm install",
-    "install-frontend": "cd frontend-web && npm install", 
-    "install-mobile": "cd mobile-app && npm install",
+    "install-frontend": "cd frontend-web && npm install",
     "dev": "docker-compose up --build",
     "start": "docker-compose up -d",
     "stop": "docker-compose down",
@@ -15,7 +14,7 @@
     "populate": "docker-compose exec backend node populate-db.js",
     "populate-chat": "docker-compose exec backend npm run populate-chat",
     "setup": "npm run dev && npm run init-db && npm run populate && npm run populate-chat",
-    "mobile": "cd mobile-app && npm start",
+
     "logs": "docker-compose logs -f",
     "clean": "docker system prune -a"
   },
@@ -28,7 +27,7 @@
     "nodejs",
     "postgresql",
     "docker",
-    "react-native"
+
   ],
   "author": "AdoptiON",
   "license": "MIT",

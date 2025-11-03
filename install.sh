@@ -22,18 +22,9 @@ echo "✅ Docker encontrado"
 if command -v node &> /dev/null; then
     echo "✅ Node.js encontrado: $(node --version)"
     
-    # Instalar Expo CLI se não existir
-    if ! command -v expo &> /dev/null; then
-        echo "📱 Instalando Expo CLI..."
-        npm install -g @expo/cli
-    fi
-    
-    # Instalar dependências do mobile
-    echo "📱 Instalando dependências do app mobile..."
-    cd mobile-app && npm install && cd ..
 else
-    echo "⚠️ Node.js não encontrado. App mobile não será configurado."
-    echo "📥 Para usar o app mobile, instale Node.js: https://nodejs.org/"
+    echo "⚠️ Node.js não encontrado."
+    echo "📥 Para desenvolvimento local, instale Node.js: https://nodejs.org/"
 fi
 
 # Construir e iniciar sistema
@@ -69,8 +60,6 @@ echo "   Adotante: joao@email.com / 123456"
 echo "   ONG:      ong@email.com / 123456"
 echo "   Admin:    admin@email.com / 123456"
 echo ""
-echo "📱 Para usar o app mobile:"
-echo "   cd mobile-app && npm start"
-echo ""
+
 echo "🛑 Para parar o sistema:"
 echo "   docker-compose down"

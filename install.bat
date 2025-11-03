@@ -18,21 +18,9 @@ node --version >nul 2>&1
 if %errorlevel% equ 0 (
     echo ✅ Node.js encontrado
     
-    REM Instalar Expo CLI se não existir
-    expo --version >nul 2>&1
-    if %errorlevel% neq 0 (
-        echo 📱 Instalando Expo CLI...
-        npm install -g @expo/cli
-    )
-    
-    REM Instalar dependências do mobile
-    echo 📱 Instalando dependências do app mobile...
-    cd mobile-app
-    npm install
-    cd ..
 ) else (
-    echo ⚠️ Node.js não encontrado. App mobile não será configurado.
-    echo 📥 Para usar o app mobile, instale Node.js: https://nodejs.org/
+    echo ⚠️ Node.js não encontrado.
+    echo 📥 Para desenvolvimento local, instale Node.js: https://nodejs.org/
 )
 
 REM Construir e iniciar sistema
@@ -68,9 +56,7 @@ echo    Adotante: joao@email.com / 123456
 echo    ONG:      ong@email.com / 123456
 echo    Admin:    admin@email.com / 123456
 echo.
-echo 📱 Para usar o app mobile:
-echo    cd mobile-app ^&^& npm start
-echo.
+
 echo 🛑 Para parar o sistema:
 echo    docker-compose down
 echo.
