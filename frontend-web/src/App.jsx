@@ -30,17 +30,17 @@ import { AuthProvider } from './context/AuthContext';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#FF6B35',
+      main: '#6366f1',
     },
     secondary: {
-      main: '#4ECDC4',
+      main: '#f59e0b',
     },
     background: {
-      default: '#F7F9FC',
+      default: '#f8fafc',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
   },
 });
 
