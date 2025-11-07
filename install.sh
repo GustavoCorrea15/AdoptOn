@@ -58,7 +58,7 @@ echo ""
 echo "👤 Usuários de teste:"
 echo "   Adotante: joao@email.com / 123456"
 echo "   ONG:      ong@email.com / 123456"
-echo "   Admin:    admin@email.com / 123456"
+echo "   Admin:    admin@sistema.com / admin123"
 echo ""
 
 echo "🛑 Para parar o sistema:"
