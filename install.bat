@@ -37,7 +37,7 @@ docker-compose exec backend npm run init-db
 
 REM Popular com dados de exemplo
 echo 📊 Populando com dados de exemplo...
-docker-compose exec backend node populate-db.js
+docker-compose exec backend npm run populate-db
 
 REM Popular chat de exemplo
 echo 💬 Criando conversas de exemplo...

@@ -11,10 +11,9 @@
     "stop": "docker-compose down",
     "reset": "docker-compose down -v && docker-compose up --build",
     "init-db": "docker-compose exec backend npm run init-db",
-    "populate": "docker-compose exec backend node populate-db.js",
+    "populate": "docker-compose exec backend npm run populate-db",
     "populate-chat": "docker-compose exec backend npm run populate-chat",
     "setup": "npm run dev && npm run init-db && npm run populate && npm run populate-chat",
-
     "logs": "docker-compose logs -f",
     "clean": "docker system prune -a"
   },
@@ -26,8 +25,7 @@
     "react",
     "nodejs",
     "postgresql",
-    "docker",
-
+    "docker"
   ],
   "author": "AdoptiON",
   "license": "MIT",

@@ -204,65 +204,81 @@ class Animal {
       ong_id, JSON.stringify(fotos), temperamento, necessidades_especiais
     ];
 
-    // Simulação para memoryDB - em produção usar pool.query com prepared statements
-    const newAnimal = {
-      id: memoryDB.animals.length + 1,
-      ...animalData,
-      fotos: Array.isArray(fotos) ? fotos : [fotos],
-      status: 'disponivel',
-      created_at: new Date(),
-      updated_at: new Date()
-    };
-    memoryDB.animals.push(newAnimal);
-    return newAnimal;
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 
   static async findById(id) {
-    return memoryDB.animals.find(animal => animal.id === parseInt(id));
+    const query = 'SELECT * FROM animais WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
   }
 
   static async findAvailable(filters = {}) {
-    const animals = [];
-    const limit = filters.limit ? parseInt(filters.limit) : memoryDB.animals.length;
+    let query = 'SELECT * FROM animais WHERE status = $1';
+    const values = ['disponivel'];
+    let paramCount = 2;
     
-    for (const animal of memoryDB.animals) {
-      if (animals.length >= limit) break;
-      
-      if (animal.status !== 'disponivel') continue;
-      if (filters.especie && animal.especie !== filters.especie) continue;
-      if (filters.porte && animal.porte !== filters.porte) continue;
-      if (filters.sexo && animal.sexo !== filters.sexo) continue;
-      if (filters.cidade && !animal.ong_cidade.toLowerCase().includes(filters.cidade.toLowerCase())) continue;
-      
-      animals.push(animal);
+    if (filters.especie) {
+      query += ` AND especie = $${paramCount}`;
+      values.push(filters.especie);
+      paramCount++;
     }
     
-    return animals;
+    if (filters.porte) {
+      query += ` AND porte = $${paramCount}`;
+      values.push(filters.porte);
+      paramCount++;
+    }
+    
+    if (filters.sexo) {
+      query += ` AND sexo = $${paramCount}`;
+      values.push(filters.sexo);
+      paramCount++;
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    if (filters.limit) {
+      query += ` LIMIT $${paramCount}`;
+      values.push(parseInt(filters.limit));
+    }
+    
+    const result = await pool.query(query, values);
+    return result.rows;
   }
 
   static async findByOng(ongId, status = null) {
-    const ongIdNum = parseInt(ongId);
-    return memoryDB.animals
-      .filter(animal => animal.ong_id === ongIdNum && (!status || animal.status === status))
-      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    let query = 'SELECT * FROM animais WHERE ong_id = $1';
+    const values = [ongId];
+    
+    if (status) {
+      query += ' AND status = $2';
+      values.push(status);
+    }
+    
+    query += ' ORDER BY created_at DESC';
+    
+    const result = await pool.query(query, values);
+    return result.rows;
   }
 
   static async updateStatus(id, status, adotante_id = null) {
-    const animalId = parseInt(id);
-    if (isNaN(animalId)) {
-      throw new Error('ID do animal inválido');
+    let query = 'UPDATE animais SET status = $1, updated_at = NOW()';
+    const values = [status];
+    let paramCount = 2;
+    
+    if (adotante_id) {
+      query += `, adotante_id = $${paramCount}`;
+      values.push(adotante_id);
+      paramCount++;
     }
     
-    const animalIndex = memoryDB.animals.findIndex(a => a.id === animalId);
-    if (animalIndex === -1) {
-      throw new Error('Animal não encontrado');
-    }
+    query += ` WHERE id = $${paramCount} RETURNING *`;
+    values.push(id);
     
-    memoryDB.animals[animalIndex].status = status;
-    if (adotante_id) memoryDB.animals[animalIndex].adotante_id = adotante_id;
-    memoryDB.animals[animalIndex].updated_at = new Date();
-    
-    return memoryDB.animals[animalIndex];
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 
   static async addMedicalRecord(animalId, recordData) {
@@ -285,21 +301,8 @@ class Animal {
       veterinario, observacoes, proximo_agendamento
     ];
 
-    if (!animalId || !recordData) {
-      throw new Error('Parâmetros obrigatórios ausentes');
-    }
-    
-    try {
-      const newRecord = {
-        id: Date.now(),
-        animal_id: parseInt(animalId),
-        ...recordData,
-        created_at: new Date()
-      };
-      return newRecord;
-    } catch (error) {
-      throw new Error('Erro ao adicionar registro médico: ' + error.message);
-    }
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 
   static async getMedicalHistory(animalId) {
@@ -309,30 +312,20 @@ class Animal {
       ORDER BY data_procedimento DESC
     `;
     
-    const animalIdNum = parseInt(animalId);
-    return []; // Simulação - retorna array vazio
+    const result = await pool.query(query, [animalId]);
+    return result.rows;
   }
 
   static async getMatchingAnimals(userId, limit = 10) {
-    const userQuery = `
-      SELECT tipo_moradia, tamanho_moradia, tem_quintal,
-             experiencia_pets, tempo_disponivel, preferencias_animal,
-             cidade
-      FROM usuarios WHERE id = $1
+    const query = `
+      SELECT * FROM animais 
+      WHERE status = 'disponivel' 
+      ORDER BY created_at DESC 
+      LIMIT $1
     `;
     
-    if (limit <= 0) return [];
-    
-    const result = [];
-    const animals = memoryDB.animals;
-    
-    for (let i = 0; i < animals.length && result.length < limit; i++) {
-      if (animals[i].status === 'disponivel') {
-        result.push(animals[i]);
-      }
-    }
-    
-    return result;
+    const result = await pool.query(query, [limit]);
+    return result.rows;
   }
 }
 

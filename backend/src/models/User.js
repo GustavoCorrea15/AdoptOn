@@ -1,4 +1,4 @@
-const { memoryDB } = require('../config/database');
+const pool = require('../config/database');
 const bcrypt = require('bcryptjs');
 
 class User {
@@ -13,39 +13,39 @@ class User {
 
     const hashedPassword = await bcrypt.hash(senha, 10);
     
-    const newUser = {
-      id: memoryDB.users.length + 1,
-      nome, email, senha: hashedPassword, telefone, tipo_usuario,
+    const query = `
+      INSERT INTO usuarios (
+        nome, email, senha, telefone, tipo_usuario,
+        endereco, cidade, estado, cep,
+        tipo_moradia, tamanho_moradia, tem_quintal,
+        experiencia_pets, tempo_disponivel, renda_familiar,
+        motivacao_adocao, preferencias_animal
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      RETURNING id, nome, email, tipo_usuario, created_at
+    `;
+    
+    const values = [
+      nome, email, hashedPassword, telefone, tipo_usuario,
       endereco, cidade, estado, cep,
       tipo_moradia, tamanho_moradia, tem_quintal,
       experiencia_pets, tempo_disponivel, renda_familiar,
-      motivacao_adocao, preferencias_animal,
-      ativo: true,
-      verificado: false,
-      created_at: new Date()
-    };
+      motivacao_adocao, JSON.stringify(preferencias_animal)
+    ];
     
-    memoryDB.users.push(newUser);
-    return {
-      id: newUser.id,
-      nome: newUser.nome,
-      email: newUser.email,
-      tipo_usuario: newUser.tipo_usuario,
-      created_at: newUser.created_at
-    };
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 
   static async findByEmail(email) {
-    return memoryDB.users.find(user => user.email === email);
+    const query = 'SELECT * FROM usuarios WHERE email = $1';
+    const result = await pool.query(query, [email]);
+    return result.rows[0];
   }
 
   static async findById(id) {
-    const user = memoryDB.users.find(user => user.id === parseInt(id));
-    if (user) {
-      const { senha, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    }
-    return null;
+    const query = 'SELECT id, nome, email, telefone, tipo_usuario, endereco, cidade, estado, cep, tipo_moradia, tamanho_moradia, tem_quintal, experiencia_pets, tempo_disponivel, renda_familiar, motivacao_adocao, preferencias_animal, ativo, verificado, created_at, updated_at FROM usuarios WHERE id = $1';
+    const result = await pool.query(query, [id]);
+    return result.rows[0];
   }
 
   static async updateProfile(id, updateData) {
@@ -58,7 +58,7 @@ class User {
     Object.keys(updateData).forEach(key => {
       if (updateData[key] !== undefined && allowedFields.includes(key)) {
         fields.push(`${key} = $${paramCount}`);
-        values.push(updateData[key]);
+        values.push(key === 'preferencias_animal' ? JSON.stringify(updateData[key]) : updateData[key]);
         paramCount++;
       }
     });
@@ -77,27 +77,8 @@ class User {
       RETURNING id, nome, email, tipo_usuario, updated_at
     `;
 
-    // Simulação para memoryDB - em produção usar pool.query com prepared statements
-    const userId = parseInt(id);
-    const userIndex = memoryDB.users.findIndex(u => u.id === userId);
-    
-    if (userIndex === -1) {
-      throw new Error('Usuário não encontrado');
-    }
-    
-    const user = memoryDB.users[userIndex];
-    
-    // Atualizar apenas campos permitidos
-    const fieldsToUpdate = Object.keys(updateData)
-      .filter(key => updateData[key] !== undefined && allowedFields.includes(key));
-    
-    fieldsToUpdate.forEach(key => {
-      user[key] = updateData[key];
-    });
-    
-    user.updated_at = new Date();
-    const { senha, ...result } = user;
-    return result;
+    const result = await pool.query(query, values);
+    return result.rows[0];
   }
 
   static async validatePassword(plainPassword, hashedPassword) {
@@ -117,12 +98,8 @@ class User {
       FROM animais WHERE id = $1
     `;
 
-    // Simulação para memoryDB - em produção usar pool.query com prepared statements
-    const user = memoryDB.users.find(u => u.id === parseInt(userId));
-    const animal = memoryDB.animals?.find(a => a.id === parseInt(animalId));
-    
-    const userResult = { rows: user ? [user] : [] };
-    const animalResult = { rows: animal ? [animal] : [] };
+    const userResult = await pool.query(userQuery, [userId]);
+    const animalResult = await pool.query(animalQuery, [animalId]);
 
     if (!userResult.rows[0] || !animalResult.rows[0]) {
       return 0;
