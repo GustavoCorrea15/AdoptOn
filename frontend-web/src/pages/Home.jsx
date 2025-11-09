@@ -7,172 +7,302 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
+  Avatar,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import PetsIcon from '@mui/icons-material/Pets';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import HomeIcon from '@mui/icons-material/Home';
+import SearchIcon from '@mui/icons-material/Search';
 
 const Home = () => {
   const navigate = useNavigate();
 
-  const features = [
-    {
-      icon: <span style={{ fontSize: 40 }}>🐾</span>,
-      title: 'Matching Inteligente',
-      description: 'Encontre o animal perfeito para seu perfil com 85% de compatibilidade'
-    },
-    {
-      icon: <span style={{ fontSize: 40 }}>❤️</span>,
-      title: 'Adoção Responsável',
-      description: 'Processo estruturado que reduz devoluções de 60% para 15%'
-    },
-    {
-      icon: <span style={{ fontSize: 40 }}>🏠</span>,
-      title: 'Acompanhamento',
-      description: 'Suporte contínuo pós-adoção para garantir o bem-estar'
-    }
-  ];
-
   return (
-    <Container maxWidth="lg">
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
       {/* Hero Section */}
       <Box
         sx={{
-          textAlign: 'center',
-          py: 8,
-          background: 'linear-gradient(135deg, #FF6B35 0%, #4ECDC4 100%)',
-          borderRadius: 2,
+          background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
           color: 'white',
-          mb: 6,
-          mt: 2
+          py: { xs: 8, md: 12 },
+          textAlign: 'center'
         }}
       >
-        <Typography variant="h2" component="h1" fontWeight="bold" textAlign="center" sx={{ mb: 2 }}>
-          🐕 Sistema de Adoção Responsável 🐱
-        </Typography>
-        <Typography variant="h5" component="p" gutterBottom sx={{ mb: 4 }}>
-          Conectando animais e famílias através de matching inteligente
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Button
-            variant="contained"
-            size="large"
+        <Container maxWidth="lg">
+          <Typography 
+            variant="h2" 
+            component="h1" 
+            fontWeight="bold" 
             sx={{ 
-              bgcolor: 'white', 
-              color: 'primary.main',
-              '&:hover': { bgcolor: 'grey.100' }
+              mb: 3,
+              fontSize: { xs: '2.5rem', md: '3.5rem' }
             }}
-            onClick={() => navigate('/animals')}
           >
-            Ver Animais Disponíveis
-          </Button>
-          <Button
-            variant="outlined"
-            size="large"
+            AdoptiON
+            <br />
+            Encontre seu melhor amigo
+          </Typography>
+          <Typography 
+            variant="h6" 
             sx={{ 
-              borderColor: 'white', 
-              color: 'white',
-              '&:hover': { borderColor: 'grey.300', bgcolor: 'rgba(255,255,255,0.1)' }
+              mb: 4, 
+              opacity: 0.9,
+              maxWidth: '600px',
+              mx: 'auto'
             }}
-            onClick={() => navigate('/register')}
           >
-            Cadastre-se
-          </Button>
-        </Box>
-
+            Conectamos você com animais que precisam de um lar amoroso.
+            Adote com responsabilidade e mude duas vidas para sempre.
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<SearchIcon />}
+              sx={{ 
+                bgcolor: 'white', 
+                color: '#6366f1',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                '&:hover': { bgcolor: '#f1f5f9' }
+              }}
+              onClick={() => navigate('/animals')}
+            >
+              Buscar Pets
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{ 
+                borderColor: 'white', 
+                color: 'white',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                '&:hover': { 
+                  borderColor: 'white', 
+                  bgcolor: 'rgba(255,255,255,0.1)' 
+                }
+              }}
+              onClick={() => navigate('/register')}
+            >
+              Cadastrar-se
+            </Button>
+          </Box>
+        </Container>
       </Box>
 
       {/* Features Section */}
-      <Box sx={{ mb: 6, position: 'relative' }}>
-
-        <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
-          Como Funciona
-        </Typography>
-        <Typography variant="body1" textAlign="center" color="text.secondary" sx={{ mb: 4 }}>
-          Nosso sistema revoluciona o processo de adoção com tecnologia e ciência
-        </Typography>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Typography 
+            variant="h3" 
+            component="h2" 
+            fontWeight="bold" 
+            sx={{ mb: 2, color: '#1e293b' }}
+          >
+            Como funciona
+          </Typography>
+          <Typography 
+            variant="h6" 
+            color="text.secondary" 
+            sx={{ maxWidth: '600px', mx: 'auto' }}
+          >
+            Um processo simples e seguro para conectar pets com suas famílias ideais
+          </Typography>
+        </Box>
         
         <Grid container spacing={4}>
-          {features.map((feature, index) => (
-            <Grid item xs={12} md={4} key={index}>
-              <Card sx={{ height: '100%', textAlign: 'center', p: 2 }}>
-                <CardContent>
-                  <Box sx={{ mb: 2, position: 'relative' }}>
-                    {feature.icon}
-
-                  </Box>
-                  <Typography variant="h6" component="h3" gutterBottom>
-                    {feature.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {feature.description}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+          <Grid item xs={12} md={4}>
+            <Card 
+              sx={{ 
+                height: '100%', 
+                textAlign: 'center', 
+                p: 3,
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                '&:hover': {
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  transform: 'translateY(-2px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
+              <CardContent>
+                <Avatar 
+                  sx={{ 
+                    bgcolor: '#6366f1', 
+                    width: 64, 
+                    height: 64, 
+                    mx: 'auto', 
+                    mb: 2 
+                  }}
+                >
+                  <SearchIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h5" component="h3" fontWeight="bold" sx={{ mb: 2 }}>
+                  Busque
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Navegue por centenas de pets disponíveis para adoção com filtros personalizados
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Card 
+              sx={{ 
+                height: '100%', 
+                textAlign: 'center', 
+                p: 3,
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                '&:hover': {
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  transform: 'translateY(-2px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
+              <CardContent>
+                <Avatar 
+                  sx={{ 
+                    bgcolor: '#f59e0b', 
+                    width: 64, 
+                    height: 64, 
+                    mx: 'auto', 
+                    mb: 2 
+                  }}
+                >
+                  <FavoriteIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h5" component="h3" fontWeight="bold" sx={{ mb: 2 }}>
+                  Conecte
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Entre em contato direto com ONGs e protetores através do nosso chat
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Card 
+              sx={{ 
+                height: '100%', 
+                textAlign: 'center', 
+                p: 3,
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                '&:hover': {
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  transform: 'translateY(-2px)',
+                  transition: 'all 0.3s ease'
+                }
+              }}
+            >
+              <CardContent>
+                <Avatar 
+                  sx={{ 
+                    bgcolor: '#10b981', 
+                    width: 64, 
+                    height: 64, 
+                    mx: 'auto', 
+                    mb: 2 
+                  }}
+                >
+                  <HomeIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h5" component="h3" fontWeight="bold" sx={{ mb: 2 }}>
+                  Adote
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Complete o processo de adoção e dê um novo lar para seu novo amigo
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Box>
+      </Container>
 
       {/* Stats Section */}
-      <Box
-        sx={{
-          bgcolor: 'primary.main',
-          color: 'white',
-          p: 4,
-          borderRadius: 2,
-          textAlign: 'center',
-          mb: 6
-        }}
-      >
-        <Typography variant="h4" component="h2" gutterBottom>
-          Nosso Impacto
-        </Typography>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h3" component="div" fontWeight="bold">
-              85%
-            </Typography>
-            <Typography variant="body1">
-              Taxa de Compatibilidade
-            </Typography>
+      <Box sx={{ bgcolor: '#1e293b', color: 'white', py: 8 }}>
+        <Container maxWidth="lg">
+          <Typography 
+            variant="h3" 
+            component="h2" 
+            fontWeight="bold" 
+            textAlign="center" 
+            sx={{ mb: 6 }}
+          >
+            Nosso impacto
+          </Typography>
+          <Grid container spacing={4} textAlign="center">
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h2" component="div" fontWeight="bold" sx={{ mb: 1 }}>
+                1.500+
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.8 }}>
+                Pets adotados
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h2" component="div" fontWeight="bold" sx={{ mb: 1 }}>
+                95%
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.8 }}>
+                Taxa de sucesso
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <Typography variant="h2" component="div" fontWeight="bold" sx={{ mb: 1 }}>
+                200+
+              </Typography>
+              <Typography variant="h6" sx={{ opacity: 0.8 }}>
+                ONGs parceiras
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h3" component="div" fontWeight="bold">
-              15%
-            </Typography>
-            <Typography variant="body1">
-              Taxa de Devolução
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography variant="h3" component="div" fontWeight="bold">
-              1.500+
-            </Typography>
-            <Typography variant="body1">
-              Animais Adotados
-            </Typography>
-          </Grid>
-        </Grid>
+        </Container>
       </Box>
 
       {/* CTA Section */}
-      <Box sx={{ textAlign: 'center', py: 6 }}>
-        <Typography variant="h4" component="h2" gutterBottom>
-          Pronto para Adotar?
+      <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
+        <Typography 
+          variant="h3" 
+          component="h2" 
+          fontWeight="bold" 
+          sx={{ mb: 2, color: '#1e293b' }}
+        >
+          Pronto para adotar?
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Encontre seu novo melhor amigo hoje mesmo
+        <Typography 
+          variant="h6" 
+          color="text.secondary" 
+          sx={{ mb: 4, maxWidth: '500px', mx: 'auto' }}
+        >
+          Milhares de pets estão esperando por uma família. Comece sua jornada hoje.
         </Typography>
         <Button
           variant="contained"
           size="large"
+          startIcon={<PetsIcon />}
+          sx={{
+            bgcolor: '#6366f1',
+            px: 4,
+            py: 1.5,
+            fontSize: '1.1rem',
+            '&:hover': { bgcolor: '#5b5bd6' }
+          }}
           onClick={() => navigate('/animals')}
         >
-          Começar Agora
+          Ver Pets Disponíveis
         </Button>
-      </Box>
-    </Container>
+      </Container>
+    </Box>
   );
 };
 

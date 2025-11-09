@@ -37,7 +37,7 @@ docker-compose exec backend npm run init-db
 
 REM Popular com dados de exemplo
 echo 📊 Populando com dados de exemplo...
-docker-compose exec backend node populate-db.js
+docker-compose exec backend npm run populate-db
 
 REM Popular chat de exemplo
 echo 💬 Criando conversas de exemplo...
@@ -54,7 +54,7 @@ echo.
 echo 👤 Usuários de teste:
 echo    Adotante: joao@email.com / 123456
 echo    ONG:      ong@email.com / 123456
-echo    Admin:    admin@email.com / 123456
+echo    Admin:    admin@sistema.com / admin123
 echo.
 
 echo 🛑 Para parar o sistema:
